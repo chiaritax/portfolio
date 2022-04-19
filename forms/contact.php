@@ -1,41 +1,64 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+// Incluir la libreria PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'micolfernandezquerol@gmail.com';
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
+// Variables form HTML
+$nombre    = $_POST["name"];
+$correo    = $_POST["email"];
+$asunto    = $_POST["subject"];
+$mensaje   = $_POST["message"];
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+$cuerpo = '<div style="font-size: 16px;"> <div> <p> Este mensaje fue envia por  <span> <b>';
+$cuerpo .= $nombre;
+$cuerpo .= '</b> </span> </p> <div> <p> Su e-mail es: <span>';
+$cuerpo .= $correo;
+$cuerpo .= '</span> </p> <div> <p> Mensaje: <span>';
+$cuerpo .= $mensaje;
+$cuerpo .= '</span> </p> <div> <p> Enviado el <span>';
+$cuerpo .= date('d/m/Y', time());
+$cuerpo .= '</span> </p> </div>';
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
 
-  echo $contact->send();
-?>
+// Inicializaciones
+$hostSMTP = 'smtp.gmail.com';
+$emisor = 'chiaritafq@gmail.com';
+$pass = 'querol2992';
+$puerto = 465;
+$receptor = 'micolfernandezquerol@gmail.com';
+$reply = $correo;
+//Create an instance; passing `true` enables exceptions
+$mail = new PHPMailer(true);
+
+try {
+    //Server settings
+    $mail->SMTPDebug = 0;                      //Enable verbose debug output
+    $mail->isSMTP();                                            //Send using SMTP
+    $mail->Host       = $hostSMTP;                     //Set the SMTP server to send through
+    $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+    $mail->Username   = $emisor;                     //SMTP username
+    $mail->Password   = $pass;                               //SMTP password
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+    $mail->Port       = $puerto;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+    //Recipients
+    $mail->setFrom($emisor, 'Formulario web');
+    $mail->addAddress($receptor);     //Add a recipient
+    $mail->addReplyTo($reply);
+
+    //Content
+    $mail->isHTML(true);                                  //Set email format to HTML
+    $mail->Subject = $asunto;
+    $mail->Body    = $cuerpo;
+
+    $mail->send();
+    header("location:../index.html");
+} catch (Exception $e) {
+    header("location:../index.html#contact");
+}
