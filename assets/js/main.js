@@ -261,4 +261,52 @@
     })
   });
 
+  /**
+   * Contact form
+   */
+   function validator(campo, event) {
+    if (campo.value == '' ) {
+        campo.placeholder = "Campo requerido";
+        campo.style.borderColor = 'red';
+        campo.classList.add("formulario-error")
+        event.preventDefault()
+    } else {
+        console.log('form sended')
+        // event.preventDefault()
+    }
+  };
+
+   function resetCampos(fieldName, event) {
+    event.target.placeholder = fieldName;
+    event.target.style.borderColor = '#ced4da';
+    event.target.classList.remove("formulario-error")
+  }
+  
+  document.getElementById("formSender").addEventListener("click", function(event){
+      let campos = []
+      campos.push(document.querySelector("#name"))
+      campos.push(document.querySelector("#email"))
+      campos.push(document.querySelector("#subject"))
+      campos.push(document.querySelector("#message"))
+      console.log(campos)
+      campos.forEach(campo => {
+          validator(campo, event)
+      });
+      validator()
+  });
+
+  document.querySelector("#name").addEventListener('focus', (event) => {
+      resetCampos('Your name', event)
+    });
+  document.querySelector("#email").addEventListener('focus', (event) => {
+      resetCampos('Your e-mail', event)
+    });
+  document.querySelector("#message").addEventListener('focus', (event) => {
+    resetCampos('Message', event)
+  });
+  document.querySelector("#subject").addEventListener('focus', (event) => {
+      resetCampos('Subject', event)
+    });
+  // End form Validation
+
 })()

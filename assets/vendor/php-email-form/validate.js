@@ -3,10 +3,11 @@
 * URL: https://bootstrapmade.com/php-email-form/
 * Author: BootstrapMade.com
 */
+/*
 (function () {
   "use strict";
 
-  let forms = document.querySelectorAll('.php-email-form');
+  let forms = document.querySelectorAll('.php-email-form2');
 
   forms.forEach( function(e) {
     e.addEventListener('submit', function(event) {
@@ -83,3 +84,4 @@
   }
 
 })();
+*/
